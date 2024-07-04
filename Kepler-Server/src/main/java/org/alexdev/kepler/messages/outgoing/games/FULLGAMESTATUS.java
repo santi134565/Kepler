@@ -53,7 +53,6 @@ public class FULLGAMESTATUS extends MessageComposer {
         }
         else {
             var objects = this.game.getObjects();
-            var turns = ((SnowStormGame)this.game).getUpdateTask().getExecutingTurns();
 
             response.writeInt(this.game.getGameState().getStateId());
             response.writeInt(this.game.getPreparingGameSecondsLeft().get());
@@ -67,7 +66,20 @@ public class FULLGAMESTATUS extends MessageComposer {
             response.writeBool(false);
             response.writeInt(this.game.getTeamAmount());
 
-            new SNOWSTORM_GAMESTATUS(turns).compose(response);
+            response.writeInt(1);
+            response.writeInt(1);
+
+            response.writeInt(0);
+            /*
+            response.writeInt(this.turns.size() == 0 ? 1 : this.turns.size());
+
+            for (var turn : this.turns) {
+                response.writeInt(turn.getSubTurns().size());
+
+                for (var gameObject : turn.getSubTurns()) {
+                    gameObject.serialiseObject(response);
+                }
+            }*/
         }
     }
 

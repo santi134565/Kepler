@@ -31,7 +31,7 @@ public class REQUESTFULLGAMESTATUS implements MessageEvent {
             return;
         }
 
-        player.send(new FULLGAMESTATUS(game));
+        // player.send(new FULLGAMESTATUS(game));
 
         //player.send(new SNOWSTORM_FULLGAMESTATUS((SnowStormGame) game, gamePlayer, objects, snowStormGame.getExecutingEvents()));
     }

@@ -1,14 +1,7 @@
 package org.alexdev.kepler.game.games.snowstorm.objects;
 
-import org.alexdev.kepler.game.GameScheduler;
 import org.alexdev.kepler.game.games.player.GamePlayer;
 import org.alexdev.kepler.game.games.snowstorm.SnowStormGame;
-import org.alexdev.kepler.game.games.snowstorm.mapping.SnowStormPathfinder;
-import org.alexdev.kepler.game.games.snowstorm.tasks.SnowballMovementTask;
-import org.alexdev.kepler.game.pathfinder.Position;
-
-import java.util.LinkedList;
-import java.util.concurrent.TimeUnit;
 
 public class SnowballObject {
     public GamePlayer getTargetPlayer() {
@@ -89,28 +82,6 @@ public class SnowballObject {
         }
 
         return -1;
-    }
-
-    public LinkedList<Position> getPath() {
-        return SnowStormPathfinder.getMaxVisibility(
-                this,
-                getFromX(),
-                getFromY(),
-                getTargetX(),
-                getTargetY(),
-                getTrajectory()
-        );
-    }
-
-    public void scheduleMovementTask() {
-        var path = this.getPath();
-
-        if (this.getTimeToLive() > 0 && path.size() > 0) {
-            var futureRunnable = new SnowballMovementTask(this);
-                futureRunnable.setFuture(GameScheduler.getInstance().getService().scheduleAtFixedRate(futureRunnable, 0, (this.getTimeToLive() * 100) / path.size(), TimeUnit.MILLISECONDS));
-        } else {
-            this.game.handleSnowballLanding(this, false);
-        }
     }
 
     public int getObjectId() {

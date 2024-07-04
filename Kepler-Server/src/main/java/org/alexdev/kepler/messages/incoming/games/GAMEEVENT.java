@@ -6,8 +6,6 @@ import org.alexdev.kepler.game.games.battleball.BattleBallPowerUp;
 import org.alexdev.kepler.game.games.battleball.events.ActivatePowerUpEvent;
 import org.alexdev.kepler.game.games.enums.GameType;
 import org.alexdev.kepler.game.games.player.GamePlayer;
-import org.alexdev.kepler.game.games.snowstorm.SnowStormGame;
-import org.alexdev.kepler.game.games.snowstorm.messages.SnowStormMessageHandler;
 import org.alexdev.kepler.game.player.Player;
 import org.alexdev.kepler.messages.types.MessageEvent;
 import org.alexdev.kepler.server.netty.streams.NettyRequest;
@@ -30,9 +28,8 @@ public class GAMEEVENT implements MessageEvent {
         int eventType = reader.readInt(); // Instance ID? Useless?
 
         if (game.getGameType() == GameType.SNOWSTORM) {
-            SnowStormMessageHandler.getInstance().handleMessage(eventType, reader, (SnowStormGame) game, gamePlayer);
-        } else {
 
+        } else {
             // Jump request
             if (eventType == 2) {
                 if (!player.getRoomUser().isWalkingAllowed()) {
