@@ -5,7 +5,8 @@ import org.alexdev.kepler.game.games.GameManager;
 import org.alexdev.kepler.game.games.battleball.BattleBallTile;
 import org.alexdev.kepler.game.games.enums.GameState;
 import org.alexdev.kepler.game.games.enums.GameType;
-import org.alexdev.kepler.game.games.snowstorm.SnowStormGame;
+import org.alexdev.kepler.game.games.snowstorm.SnowwarGame;
+import org.alexdev.kepler.game.games.snowstorm.tasks.SnowwarGameTask;
 import org.alexdev.kepler.messages.types.MessageComposer;
 import org.alexdev.kepler.server.netty.streams.NettyResponse;
 
@@ -52,6 +53,8 @@ public class FULLGAMESTATUS extends MessageComposer {
             }
         }
         else {
+            SnowwarGameTask snowStormTask = ((SnowwarGame)this.game).getUpdateTask();
+
             var objects = this.game.getObjects();
 
             response.writeInt(this.game.getGameState().getStateId());
@@ -66,10 +69,13 @@ public class FULLGAMESTATUS extends MessageComposer {
             response.writeBool(false);
             response.writeInt(this.game.getTeamAmount());
 
+            /*
             response.writeInt(1);
             response.writeInt(1);
-
             response.writeInt(0);
+            */
+
+            (new SNOWSTORM_GAMESTATUS(snowStormTask.getTurn(), snowStormTask.getChecksum())).compose(response);
             /*
             response.writeInt(this.turns.size() == 0 ? 1 : this.turns.size());
 

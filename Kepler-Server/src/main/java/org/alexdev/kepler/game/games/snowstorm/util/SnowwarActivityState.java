@@ -1,6 +1,6 @@
 package org.alexdev.kepler.game.games.snowstorm.util;
 
-public enum SnowStormActivityState {
+public enum SnowwarActivityState {
     ACTIVITY_STATE_INVINCIBLE_AFTER_STUN(3,60),
     ACTIVITY_STATE_STUNNED(2,125),
     ACTIVITY_STATE_CREATING(0, 20),
@@ -9,7 +9,7 @@ public enum SnowStormActivityState {
     private final int stateId;
     private final int timer;
 
-    SnowStormActivityState(int stateId, int timer) {
+    SnowwarActivityState(int stateId, int timer) {
         this.stateId = stateId;
         this.timer = timer;
     }

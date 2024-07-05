@@ -6,7 +6,7 @@ import org.alexdev.kepler.game.games.GameObject;
 import org.alexdev.kepler.game.games.battleball.BattleBallTile;
 import org.alexdev.kepler.game.games.enums.GameType;
 import org.alexdev.kepler.game.games.player.GameTeam;
-import org.alexdev.kepler.game.games.snowstorm.SnowStormGame;
+import org.alexdev.kepler.game.games.snowstorm.SnowwarGame;
 import org.alexdev.kepler.messages.types.MessageComposer;
 import org.alexdev.kepler.server.netty.streams.NettyResponse;
 
@@ -33,7 +33,7 @@ public class GAMESTATUS extends MessageComposer {
         this.fillTiles = fillTiles;
     }
 
-    public GAMESTATUS(SnowStormGame game, Collection<GameTeam> gameTeams, List<GameObject> objects, List<GameEvent> events) {
+    public GAMESTATUS(SnowwarGame game, Collection<GameTeam> gameTeams, List<GameObject> objects, List<GameEvent> events) {
         this.game = game;
         this.gameTeams = gameTeams;
         this.objects = objects;

@@ -1,8 +1,8 @@
 package org.alexdev.kepler.game.games.snowstorm;
 
-import org.alexdev.kepler.game.games.snowstorm.mapping.SnowStormItem;
-import org.alexdev.kepler.game.games.snowstorm.mapping.SnowStormMap;
-import org.alexdev.kepler.game.games.snowstorm.util.SnowStormSpawn;
+import org.alexdev.kepler.game.games.snowstorm.mapping.SnowwarMapItem;
+import org.alexdev.kepler.game.games.snowstorm.mapping.SnowwarMap;
+import org.alexdev.kepler.game.games.snowstorm.util.SnowwarSpawn;
 import org.alexdev.kepler.log.Log;
 
 import java.io.IOException;
@@ -13,11 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class SnowStormMapsManager {
-    private static SnowStormMapsManager instance;
-    private Map<Integer, SnowStormMap> snowStormMapMaps;
+public class SnowwarMapManager {
+    private static SnowwarMapManager instance;
+    private Map<Integer, SnowwarMap> snowStormMapMaps;
 
-    public SnowStormMapsManager() {
+    public SnowwarMapManager() {
         this.snowStormMapMaps = new HashMap<>();
 
         for (int i = 1; i <= 7; i++) {
@@ -34,12 +34,12 @@ public class SnowStormMapsManager {
 
         try {
             var mapData = Files.readString(filePath);
-            var itemList = new ArrayList<SnowStormItem>();
+            var itemList = new ArrayList<SnowwarMapItem>();
 
             for (var itemLine : mapData.split(Character.toString(13))) {
                 var itemData = itemLine.split(" ");
 
-                var item = new SnowStormItem(
+                var item = new SnowwarMapItem(
                         itemData[0],
                         itemData[1],
                         Integer.parseInt(itemData[2]),
@@ -60,18 +60,18 @@ public class SnowStormMapsManager {
                 for (var snowmachineData : snowmachineFileContents.split(Character.toString(13))) {
                     var itemData = snowmachineData.split(" ");
 
-                    var item = new SnowStormItem("", "snowball_machine", Integer.parseInt(itemData[0]), Integer.parseInt(itemData[1]), 0, 0, 1);
+                    var item = new SnowwarMapItem("", "snowball_machine", Integer.parseInt(itemData[0]), Integer.parseInt(itemData[1]), 0, 0, 1);
                     itemList.add(item);
 
-                    item = new SnowStormItem("", "snowball_machine_hidden", Integer.parseInt(itemData[0]) + 1, Integer.parseInt(itemData[1]), 0, 0, 1);
+                    item = new SnowwarMapItem("", "snowball_machine_hidden", Integer.parseInt(itemData[0]) + 1, Integer.parseInt(itemData[1]), 0, 0, 1);
                     itemList.add(item);
 
-                    item = new SnowStormItem("", "snowball_machine_hidden", Integer.parseInt(itemData[0]) + 2, Integer.parseInt(itemData[1]), 0, 0, 1);
+                    item = new SnowwarMapItem("", "snowball_machine_hidden", Integer.parseInt(itemData[0]) + 2, Integer.parseInt(itemData[1]), 0, 0, 1);
                     itemList.add(item);
                 }
             }
 
-            var spawnClusters = new ArrayList<SnowStormSpawn>();
+            var spawnClusters = new ArrayList<SnowwarSpawn>();
             var spawnClusterPath = Path.of("tools", "snowstorm_maps", "arena_" + mapId + "_spawn_clusters.dat");
 
             if (spawnClusterPath.toFile().exists()) {
@@ -83,11 +83,11 @@ public class SnowStormMapsManager {
                     var radius = Integer.parseInt(spawnData[2]);
                     var minDistance = Integer.parseInt(spawnData[3]);
 
-                    spawnClusters.add(new SnowStormSpawn(x, y, radius, minDistance));
+                    spawnClusters.add(new SnowwarSpawn(x, y, radius, minDistance));
                 }
             }
 
-            this.snowStormMapMaps.put(mapId, new SnowStormMap(mapId, mapData, itemList, getHeightMap(mapId), spawnClusters));
+            this.snowStormMapMaps.put(mapId, new SnowwarMap(mapId, mapData, itemList, getHeightMap(mapId), spawnClusters));
         } catch (IOException ex) {
             Log.getErrorLogger().error("Error when parsing map " + mapId + ": ", ex);
         }
@@ -120,9 +120,9 @@ public class SnowStormMapsManager {
         return 0;
     }
 
-    public static SnowStormMapsManager getInstance() {
+    public static SnowwarMapManager getInstance() {
         if (instance == null) {
-            instance = new SnowStormMapsManager();
+            instance = new SnowwarMapManager();
         }
 
         return instance;
@@ -202,7 +202,7 @@ public class SnowStormMapsManager {
                 "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx|";
     }
 
-    public SnowStormMap getMap(int mapId) {
+    public SnowwarMap getMap(int mapId) {
         return this.snowStormMapMaps.get(mapId);
     }
 }

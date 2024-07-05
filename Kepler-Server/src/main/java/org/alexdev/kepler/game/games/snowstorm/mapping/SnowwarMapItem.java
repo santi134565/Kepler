@@ -2,7 +2,7 @@ package org.alexdev.kepler.game.games.snowstorm.mapping;
 
 import org.alexdev.kepler.game.pathfinder.Position;
 
-public class SnowStormItem {
+public class SnowwarMapItem {
     private final String itemId;
     private final String itemName;
     private final int x;
@@ -11,7 +11,7 @@ public class SnowStormItem {
     private final int rotation;
     private final int height;
 
-    public SnowStormItem(String itemId, String itemName, int x, int y, int z, int rotation, int height) {
+    public SnowwarMapItem(String itemId, String itemName, int x, int y, int z, int rotation, int height) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.x = x;

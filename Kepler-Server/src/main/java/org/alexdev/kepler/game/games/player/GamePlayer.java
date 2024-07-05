@@ -6,7 +6,7 @@ import org.alexdev.kepler.game.games.GameObject;
 import org.alexdev.kepler.game.games.battleball.BattleBallGame;
 import org.alexdev.kepler.game.games.battleball.BattleBallTile;
 import org.alexdev.kepler.game.games.battleball.enums.BattleBallPlayerState;
-import org.alexdev.kepler.game.games.snowstorm.util.SnowStormAttributes;
+import org.alexdev.kepler.game.games.snowstorm.objects.SnowwarAvatarObject;
 import org.alexdev.kepler.game.games.utils.ScoreReference;
 import org.alexdev.kepler.game.pathfinder.Position;
 import org.alexdev.kepler.game.player.Player;
@@ -32,8 +32,6 @@ public class GamePlayer {
     private AtomicInteger score;
     private int xp;
 
-    private SnowStormAttributes snowStormAttributes;
-
     public GamePlayer(Player player) {
         this.player = player;
         this.userId = player.getDetails().getId();
@@ -46,7 +44,6 @@ public class GamePlayer {
         this.position = new Position();
         this.score = new AtomicInteger(0);
         this.xp = 0;
-        this.snowStormAttributes = new SnowStormAttributes();
     }
 
     /**
@@ -321,6 +318,15 @@ public class GamePlayer {
     }
 
     /**
+     * Get the snowwar game object attached to this player
+     *
+     * @return the game object
+     */
+    public SnowwarAvatarObject getSnowwarObject() {
+        return (SnowwarAvatarObject) gameObject;
+    }
+
+    /**
      * Set the game object attached to this player
      *
      * @param gameObject the game object
@@ -345,15 +351,6 @@ public class GamePlayer {
      */
     public void setObjectId(int objectId) {
         this.objectId = objectId;
-    }
-
-    /**
-     * Get the class for snowstorm attributes.
-     *
-     * @return the instance
-     */
-    public SnowStormAttributes getSnowStormAttributes() {
-        return snowStormAttributes;
     }
 
     public boolean isAssignedSpawn() {

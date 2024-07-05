@@ -1,23 +1,23 @@
 package org.alexdev.kepler.game.games.snowstorm.mapping;
 
 import org.alexdev.kepler.game.pathfinder.Position;
-import org.alexdev.kepler.game.games.snowstorm.util.SnowStormSpawn;
+import org.alexdev.kepler.game.games.snowstorm.util.SnowwarSpawn;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class SnowStormMap {
+public class SnowwarMap {
     private final int mapId;
-    private final ArrayList<SnowStormItem> itemList;
-    private final ArrayList<SnowStormSpawn> spawnClusters;
+    private final ArrayList<SnowwarMapItem> itemList;
+    private final ArrayList<SnowwarSpawn> spawnClusters;
     private final String compiledItems;
     private String heightMap;
     private int mapSizeY;
     private int mapSizeX;
-    private SnowStormTile[][] tiles;
+    private SnowwarTile[][] tiles;
 
-    public SnowStormMap(int mapId, String compiledItems, ArrayList<SnowStormItem> itemList, String heightMap, ArrayList<SnowStormSpawn> spawnClusters) {
+    public SnowwarMap(int mapId, String compiledItems, ArrayList<SnowwarMapItem> itemList, String heightMap, ArrayList<SnowwarSpawn> spawnClusters) {
         this.mapId = mapId;
         this.compiledItems = compiledItems;
         this.itemList = itemList;
@@ -32,7 +32,7 @@ public class SnowStormMap {
         this.mapSizeY = lines.length;
         this.mapSizeX = lines[0].length();
 
-        this.tiles = new SnowStormTile[this.mapSizeX][this.mapSizeY];
+        this.tiles = new SnowwarTile[this.mapSizeX][this.mapSizeY];
 
         StringBuilder temporaryHeightmap = new StringBuilder();
 
@@ -43,7 +43,7 @@ public class SnowStormMap {
                 String tile = Character.toString(line.charAt(x));
 
                 var position = new Position(x, y);
-                var snowStormTile = new SnowStormTile(x, y,
+                var snowStormTile = new SnowwarTile(x, y,
                         tile.equalsIgnoreCase("X"),
                         this.itemList.stream().filter(item ->
                                 item.getX() == position.getX()
@@ -67,7 +67,7 @@ public class SnowStormMap {
         this.heightMap = temporaryHeightmap.toString();
     }
 
-    public SnowStormTile getTile(Position position) {
+    public SnowwarTile getTile(Position position) {
         if (position.getX() < 0 || position.getY() < 0) {
             return null;
         }
@@ -95,12 +95,12 @@ public class SnowStormMap {
         return heightMap;
     }
 
-    public ArrayList<SnowStormItem> getItems() {
+    public ArrayList<SnowwarMapItem> getItems() {
         return this.itemList;
     }
 
-    public SnowStormSpawn[] getSpawnClusters() {
-        return spawnClusters.toArray(new SnowStormSpawn[0]);
+    public SnowwarSpawn[] getSpawnClusters() {
+        return spawnClusters.toArray(new SnowwarSpawn[0]);
     }
 
     public String getCompiledItems() {

@@ -1,6 +1,6 @@
 package org.alexdev.kepler.game.games.snowstorm.util;
 
-public enum SnowStormEvent {
+public enum SnowwarEvent {
     WALK(0),
     CREATE_SNOWBALL(3),
     THROW_SNOWBALL_AT_LOCATION(2),
@@ -8,11 +8,11 @@ public enum SnowStormEvent {
 
     private final int eventId;
 
-    SnowStormEvent(int eventId) {
+    SnowwarEvent(int eventId) {
         this.eventId = eventId;
     }
 
-    public static SnowStormEvent getEvent(int eventId) {
+    public static SnowwarEvent getEvent(int eventId) {
         for (var event : values())
             if (event.eventId == eventId)
                 return event;

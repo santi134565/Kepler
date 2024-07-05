@@ -1,9 +1,9 @@
 package org.alexdev.kepler.game.games.snowstorm.objects;
 
 import org.alexdev.kepler.game.games.player.GamePlayer;
-import org.alexdev.kepler.game.games.snowstorm.SnowStormGame;
+import org.alexdev.kepler.game.games.snowstorm.SnowwarGame;
 
-public class SnowballObject {
+public class SnowwarSnowbballObject {
     public GamePlayer getTargetPlayer() {
         return targetPlayer;
     }
@@ -35,7 +35,7 @@ public class SnowballObject {
     }
 
     private int objectId;
-    private SnowStormGame game;
+    private SnowwarGame game;
     private GamePlayer thrower;
     private int fromX;
     private int fromY;
@@ -46,7 +46,7 @@ public class SnowballObject {
     private boolean isBlocked;
     private GamePlayer targetPlayer;
 
-    public SnowballObject(int objectId, SnowStormGame snowStormGame, GamePlayer thrower, int fromX, int fromY, int targetX, int targetY, int trajectory, int direction) {
+    public SnowwarSnowbballObject(int objectId, SnowwarGame snowStormGame, GamePlayer thrower, int fromX, int fromY, int targetX, int targetY, int trajectory, int direction) {
         this.objectId = objectId;
         this.game = snowStormGame;
         this.thrower = thrower;
@@ -59,11 +59,11 @@ public class SnowballObject {
     }
 
     public int getTimeToLive() {
-        int tX = SnowStormGame.convertToWorldCoordinate(this.fromX);
-        int tY = SnowStormGame.convertToWorldCoordinate(this.fromY);
+        int tX = SnowwarGame.convertToWorldCoordinate(this.fromX);
+        int tY = SnowwarGame.convertToWorldCoordinate(this.fromY);
 
-        int tDeltaX = ((SnowStormGame.convertToWorldCoordinate(this.targetX) - tX) / 200);
-        int tDeltaY = ((SnowStormGame.convertToWorldCoordinate(this.targetY) - tY) / 200);
+        int tDeltaX = ((SnowwarGame.convertToWorldCoordinate(this.targetX) - tX) / 200);
+        int tDeltaY = ((SnowwarGame.convertToWorldCoordinate(this.targetY) - tY) / 200);
 
         double tDistanceToTarget = Math.sqrt(((tDeltaX * tDeltaX) + (tDeltaY * tDeltaY))) * 200;
 
@@ -96,7 +96,7 @@ public class SnowballObject {
         this.thrower = thrower;
     }
 
-    public SnowStormGame getGame() {
+    public SnowwarGame getGame() {
         return game;
     }
 

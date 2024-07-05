@@ -5,7 +5,7 @@ import org.alexdev.kepler.game.entity.EntityType;
 import org.alexdev.kepler.game.games.GameManager;
 import org.alexdev.kepler.game.games.enums.GameType;
 import org.alexdev.kepler.game.games.player.GamePlayer;
-import org.alexdev.kepler.game.games.snowstorm.SnowStormGame;
+import org.alexdev.kepler.game.games.snowstorm.SnowwarGame;
 import org.alexdev.kepler.game.player.Player;
 import org.alexdev.kepler.game.room.Room;
 import org.alexdev.kepler.game.triggers.GameLobbyTrigger;
@@ -76,7 +76,7 @@ public class SnowStormLobbyTrigger extends GameLobbyTrigger {
 
         int lengthChoice = (int) gameParameters.get("gameLengthChoice");
 
-        SnowStormGame game = new SnowStormGame(GameManager.getInstance().createId(), mapId, name, teams, gameCreator, lengthChoice, false);
+        SnowwarGame game = new SnowwarGame(GameManager.getInstance().createId(), mapId, name, teams, gameCreator, lengthChoice, false);
 
         GamePlayer gamePlayer = new GamePlayer(gameCreator);
         gamePlayer.setGameId(game.getId());

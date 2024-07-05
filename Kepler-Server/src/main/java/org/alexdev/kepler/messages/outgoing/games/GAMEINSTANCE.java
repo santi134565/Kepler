@@ -2,7 +2,7 @@ package org.alexdev.kepler.messages.outgoing.games;
 
 import org.alexdev.kepler.game.games.history.GameHistory;
 import org.alexdev.kepler.game.games.history.GameHistoryPlayer;
-import org.alexdev.kepler.game.games.snowstorm.SnowStormGame;
+import org.alexdev.kepler.game.games.snowstorm.SnowwarGame;
 import org.alexdev.kepler.game.games.Game;
 import org.alexdev.kepler.game.games.enums.GameState;
 import org.alexdev.kepler.game.games.enums.GameType;
@@ -39,7 +39,7 @@ public class GAMEINSTANCE extends MessageComposer {
                 response.writeString(this.game.getGameCreator());
 
                 if (this.game.getGameType() == GameType.SNOWSTORM) {
-                    SnowStormGame snowStormGame = (SnowStormGame) this.game;
+                    SnowwarGame snowStormGame = (SnowwarGame) this.game;
                     response.writeInt(snowStormGame.getGameLengthChoice());
                 }
 
@@ -78,7 +78,7 @@ public class GAMEINSTANCE extends MessageComposer {
                 response.writeString(this.game.getGameCreator());
 
                 if (this.game.getGameType() == GameType.SNOWSTORM) {
-                    SnowStormGame snowStormGame = (SnowStormGame) this.game;
+                    SnowwarGame snowStormGame = (SnowwarGame) this.game;
                     response.writeInt(snowStormGame.getGameLengthChoice());
                 }
 

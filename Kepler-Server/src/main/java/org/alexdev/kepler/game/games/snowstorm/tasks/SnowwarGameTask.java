@@ -1,46 +1,32 @@
 package org.alexdev.kepler.game.games.snowstorm.tasks;
 
-import org.alexdev.kepler.game.GameScheduler;
-import org.alexdev.kepler.game.games.GameObject;
 import org.alexdev.kepler.game.games.player.GamePlayer;
 import org.alexdev.kepler.game.games.player.GameTeam;
-import org.alexdev.kepler.game.games.snowstorm.SnowStormGame;
-import org.alexdev.kepler.game.games.snowstorm.SnowStormTurn;
-import org.alexdev.kepler.game.games.snowstorm.objects.SnowStormMachineObject;
-import org.alexdev.kepler.game.games.snowstorm.util.SnowStormFuture;
-import org.alexdev.kepler.game.pathfinder.Position;
-import org.alexdev.kepler.game.pathfinder.Rotation;
+import org.alexdev.kepler.game.games.snowstorm.SnowwarGame;
+import org.alexdev.kepler.game.games.snowstorm.SnowwarMaths;
+import org.alexdev.kepler.game.games.snowstorm.util.SnowwarObject;
 import org.alexdev.kepler.game.player.Player;
 import org.alexdev.kepler.game.room.Room;
 import org.alexdev.kepler.log.Log;
-import org.alexdev.kepler.messages.outgoing.games.SNOWSTORM_GAMESTATUS;
-import org.alexdev.kepler.util.schedule.FutureRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
-
-public class SnowStormGameTask implements Runnable {
+public class SnowwarGameTask implements Runnable {
     private final Room room;
-    private final SnowStormGame game;
-    private List<SnowStormTurn> snowStormTurnList;
-    private List<SnowStormFuture> futureEvents;
-    private int maxGameTurns = 5;
+    private final SnowwarGame game;
 
-    public SnowStormGameTask(Room room, SnowStormGame game) {
+    public int snowWarTurn = 0;
+    public int snowWarChecksum = 0;
+
+
+    public SnowwarGameTask(Room room, SnowwarGame game) {
         this.room = room;
         this.game = game;
         this.resetTurns();
-        this.futureEvents = new CopyOnWriteArrayList<>();
     }
 
-    private void resetTurns() {
-        this.snowStormTurnList = new CopyOnWriteArrayList<>();
-
-        for (int i = 0; i < maxGameTurns; i++) {
-            this.snowStormTurnList.add(new SnowStormTurn());
-        }
+    public void resetTurns() {
+        this.snowWarTurn = 0;
+        this.snowWarChecksum = 0;
+        this.calculateChecksum();
     }
 
     @Override
@@ -75,8 +61,27 @@ public class SnowStormGameTask implements Runnable {
         }
     }
 
-    private void processEntity(GamePlayer gamePlayer, SnowStormGame game) {
+    private void calculateChecksum() {
+        this.snowWarTurn++;
+        this.snowWarChecksum = SnowwarMaths.IterateSeed(this.snowWarTurn);
+
+        for (var obj : this.game.getObjects()) {
+            SnowwarObject snowwarObject = (SnowwarObject) obj;
+            this.snowWarChecksum += snowwarObject.generateChecksum();
+        }
+
+        System.out.println("Current turn: " + snowWarTurn + ", checksum: " + this.snowWarChecksum);
+    }
+
+    private void processEntity(GamePlayer gamePlayer, SnowwarGame game) {
 
     }
 
+    public int getTurn() {
+        return snowWarTurn;
+    }
+
+    public int getChecksum() {
+        return snowWarChecksum;
+    }
 }

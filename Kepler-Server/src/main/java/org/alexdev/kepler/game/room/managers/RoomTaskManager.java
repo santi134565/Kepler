@@ -4,11 +4,10 @@ import org.alexdev.kepler.game.GameScheduler;
 import org.alexdev.kepler.game.games.Game;
 import org.alexdev.kepler.game.games.battleball.BattleBallGame;
 import org.alexdev.kepler.game.games.battleball.BattleBallTask;
-import org.alexdev.kepler.game.games.snowstorm.SnowStormGame;
-import org.alexdev.kepler.game.games.snowstorm.tasks.SnowStormGameTask;
+import org.alexdev.kepler.game.games.snowstorm.SnowwarGame;
+import org.alexdev.kepler.game.games.snowstorm.tasks.SnowwarGameTask;
 import org.alexdev.kepler.game.room.Room;
 import org.alexdev.kepler.game.room.tasks.EntityTask;
-import org.alexdev.kepler.game.room.tasks.PetTask;
 import org.alexdev.kepler.game.room.tasks.RollerTask;
 import org.alexdev.kepler.game.room.tasks.StatusTask;
 import org.alexdev.kepler.util.config.GameConfiguration;
@@ -63,9 +62,9 @@ public class RoomTaskManager {
             this.scheduleTask("GameTask", new BattleBallTask(this.room, battleballGame), 0, 500, TimeUnit.MILLISECONDS);
         }
 
-        if (game instanceof SnowStormGame) {
-            SnowStormGame snowStormGame = (SnowStormGame) game;
-            this.scheduleTask("UpdateTask", new SnowStormGameTask(this.room, snowStormGame), 0, 300, TimeUnit.MILLISECONDS);
+        if (game instanceof SnowwarGame) {
+            SnowwarGame snowStormGame = (SnowwarGame) game;
+            this.scheduleTask("UpdateTask", new SnowwarGameTask(this.room, snowStormGame), 0, 300, TimeUnit.MILLISECONDS);
         }
     }
 
