@@ -75,7 +75,7 @@ public class FULLGAMESTATUS extends MessageComposer {
             response.writeInt(0);
             */
 
-            (new SNOWSTORM_GAMESTATUS(snowStormTask.getTurn(), snowStormTask.getChecksum())).compose(response);
+            (new SNOWSTORM_GAMESTATUS(snowStormTask.getTurn(), snowStormTask.getChecksum(), snowStormTask.getCurrentEvents())).compose(response);
             /*
             response.writeInt(this.turns.size() == 0 ? 1 : this.turns.size());
 

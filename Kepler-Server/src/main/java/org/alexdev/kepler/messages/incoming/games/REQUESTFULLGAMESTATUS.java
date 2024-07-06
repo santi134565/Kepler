@@ -5,6 +5,7 @@ import org.alexdev.kepler.game.games.GameManager;
 import org.alexdev.kepler.game.games.player.GamePlayer;
 import org.alexdev.kepler.game.games.snowstorm.SnowwarGame;
 import org.alexdev.kepler.game.player.Player;
+import org.alexdev.kepler.messages.outgoing.games.FULLGAMESTATUS;
 import org.alexdev.kepler.messages.types.MessageEvent;
 import org.alexdev.kepler.server.netty.streams.NettyRequest;
 
@@ -27,7 +28,7 @@ public class REQUESTFULLGAMESTATUS implements MessageEvent {
             return;
         }
 
-        // player.send(new FULLGAMESTATUS(game));
+        player.send(new FULLGAMESTATUS(game));
 
         //player.send(new SNOWSTORM_FULLGAMESTATUS((SnowStormGame) game, gamePlayer, objects, snowStormGame.getExecutingEvents()));
     }

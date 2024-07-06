@@ -23,7 +23,11 @@ public enum SnowwarSyncValues {
     MOVE_TARGET_Y("#move_target_y"),
     SCORE("#score"),
     PLAYER_ID("#player_id"),
-    TEAM_ID("#team_id");
+    TEAM_ID("#team_id"),
+
+    // Not actually sync values
+    TYPE("#type"),
+    INT_ID("#int_id");
 
     private final String tag;
 

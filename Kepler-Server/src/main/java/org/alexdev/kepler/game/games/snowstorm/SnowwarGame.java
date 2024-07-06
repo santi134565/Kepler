@@ -1,10 +1,8 @@
 package org.alexdev.kepler.game.games.snowstorm;
 
 import org.alexdev.kepler.dao.mysql.CurrencyDao;
-import org.alexdev.kepler.game.games.Game;
-import org.alexdev.kepler.game.games.GameManager;
-import org.alexdev.kepler.game.games.GameObject;
-import org.alexdev.kepler.game.games.GameTile;
+import org.alexdev.kepler.game.games.*;
+import org.alexdev.kepler.game.games.enums.GameObjectType;
 import org.alexdev.kepler.game.games.enums.GameState;
 import org.alexdev.kepler.game.games.enums.GameType;
 import org.alexdev.kepler.game.games.player.GamePlayer;
@@ -25,20 +23,19 @@ import org.alexdev.kepler.util.config.GameConfiguration;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class SnowwarGame extends Game {
     public static final int MAX_QUICK_THROW_DISTANCE = 22;
     private int gameLengthChoice;
-    private List<GameObject> executingEvents;
+    private BlockingQueue<GameObject> executingEvents;
     private long gameStarted;
+    private BlockingQueue<GameEvent> eventsQueue;
 
     public SnowwarGame(int id, int mapId, String name, int teamAmount, Player gameCreator, int gameLengthChoice, boolean privateGame) {
         super(id, mapId, GameType.SNOWSTORM, name, teamAmount, gameCreator);
         this.gameLengthChoice = gameLengthChoice;
-        this.executingEvents = new CopyOnWriteArrayList<>();
+        this.executingEvents = new LinkedBlockingQueue<>();
     }
 
     @Override
@@ -86,7 +83,7 @@ public class SnowwarGame extends Game {
 
         for (var snowballItem : this.getMap().getItems()) {
             if (snowballItem.isSnowballMachine()) {
-             //   this.getObjects().add(new SnowwarMachineObject(this.createObjectId(), snowballItem.getX(), snowballItem.getY(), 0));
+             this.getObjects().add(new SnowwarMachineObject(this.createObjectId(), snowballItem.getX(), snowballItem.getY(), 0));
             }
         }
         //this.getTotalSecondsLeft().set(seconds); // Override with game length choice
@@ -142,12 +139,13 @@ public class SnowwarGame extends Game {
 
                 p.setObjectId(this.createObjectId());
                 p.setGameObject(new SnowwarAvatarObject(p));
-
                 p.setScore(0);
 
-                /*
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.X, SnowwarMaths.convertToWorldCoordinate(p.getSpawnPosition().getX()));
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.Y, SnowwarMaths.convertToWorldCoordinate(p.getSpawnPosition().getY()));
+                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.TYPE, GameObjectType.SNOWWAR_AVATAR_OBJECT.getObjectId());
+                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.INT_ID, p.getObjectId());
+
+                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.X, p.getSpawnPosition().getX());
+                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.Y, p.getSpawnPosition().getY());
 
                 p.getSnowwarObject().setSyncValue(SnowwarSyncValues.BODY_DIRECTION, ThreadLocalRandom.current().nextInt(0, 7));
                 p.getSnowwarObject().setSyncValue(SnowwarSyncValues.HIT_POINTS, 4);
@@ -157,53 +155,17 @@ public class SnowwarGame extends Game {
                 p.getSnowwarObject().setSyncValue(SnowwarSyncValues.ACTIVITY_TIMER, 0);
                 p.getSnowwarObject().setSyncValue(SnowwarSyncValues.ACTIVITY_STATE, SnowwarActivityState.ACTIVITY_STATE_NORMAL.getStateId());
 
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.NEXT_TILE_X, SnowwarMaths.convertToWorldCoordinate(p.getSnowwarObject().getSyncValue(SnowwarSyncValues.X)));
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.NEXT_TILE_Y, SnowwarMaths.convertToWorldCoordinate(p.getSnowwarObject().getSyncValue(SnowwarSyncValues.Y)));
+                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.NEXT_TILE_X, p.getSnowwarObject().getSyncValue(SnowwarSyncValues.X));
+                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.NEXT_TILE_Y, p.getSnowwarObject().getSyncValue(SnowwarSyncValues.Y));
 
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, SnowwarMaths.convertToWorldCoordinate(p.getSnowwarObject().getSyncValue(SnowwarSyncValues.X)));
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_Y, SnowwarMaths.convertToWorldCoordinate(p.getSnowwarObject().getSyncValue(SnowwarSyncValues.Y)));
-*/
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.X, (p.getSpawnPosition().getX()));
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.Y, (p.getSpawnPosition().getY()));
-
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.BODY_DIRECTION, ThreadLocalRandom.current().nextInt(0, 7));
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.HIT_POINTS, 4);
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.SNOWBALL_COUNT, 5);
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.IS_BOT, 0);
-
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.ACTIVITY_TIMER, 0);
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.ACTIVITY_STATE, SnowwarActivityState.ACTIVITY_STATE_NORMAL.getStateId());
-
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.NEXT_TILE_X, (p.getSnowwarObject().getSyncValue(SnowwarSyncValues.X)));
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.NEXT_TILE_Y, (p.getSnowwarObject().getSyncValue(SnowwarSyncValues.Y)));
-
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, (p.getSnowwarObject().getSyncValue(SnowwarSyncValues.X)));
-                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_Y, (p.getSnowwarObject().getSyncValue(SnowwarSyncValues.Y)));
-
+                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, p.getSnowwarObject().getSyncValue(SnowwarSyncValues.X));
+                p.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_Y, p.getSnowwarObject().getSyncValue(SnowwarSyncValues.Y));
 
                 p.getSnowwarObject().setSyncValue(SnowwarSyncValues.SCORE, 0);
                 p.getSnowwarObject().setSyncValue(SnowwarSyncValues.PLAYER_ID, p.getPlayer().getDetails().getId());
 
                 p.getSnowwarObject().setSyncValue(SnowwarSyncValues.TEAM_ID, p.getTeamId());
                 p.getSnowwarObject().setSyncValue(SnowwarSyncValues.ROOM_INDEX, p.getObjectId());
-
-                /*
-                p.getSnowStormAttributes().setRotation(ThreadLocalRandom.current().nextInt(0, 7));
-                //p.getPlayer().getBadgeManager().tryAddBadge("SS_BETA", null);
-                p.getSnowStormAttributes().setActivityState(SnowwarActivityState.ACTIVITY_STATE_NORMAL);
-
-                p.getSnowStormAttributes().setWalking(false);
-                p.getSnowStormAttributes().setCurrentPosition(p.getSpawnPosition().copy());
-                p.getSnowStormAttributes().setWalkGoal(null);
-                p.getSnowStormAttributes().setNextGoal(null);
-
-                p.getSnowStormAttributes().setImmunityExpiry(0);
-                p.getSnowStormAttributes().getScore().set(0);
-                p.getSnowStormAttributes().getSnowballs().set(5);
-                p.getSnowStormAttributes().getHealth().set(4);
-                p.getSnowStormAttributes().setGoalWorldCoordinates(null);
-
-                 */
 
                 this.getObjects().add(p.getGameObject());
 
@@ -327,5 +289,9 @@ public class SnowwarGame extends Game {
 
     public int getGameLengthChoice() {
         return gameLengthChoice;
+    }
+
+    public BlockingQueue<GameObject> getExecutingEvents() {
+        return executingEvents;
     }
 }
