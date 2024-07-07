@@ -2,6 +2,7 @@ package org.alexdev.kepler.game.games.snowstorm.messages;
 
 import org.alexdev.kepler.game.games.player.GamePlayer;
 import org.alexdev.kepler.game.games.snowstorm.SnowwarGame;
+import org.alexdev.kepler.game.games.snowstorm.SnowwarMaths;
 import org.alexdev.kepler.game.games.snowstorm.events.SnowwarAvatarMoveEvent;
 import org.alexdev.kepler.game.games.snowstorm.util.SnowwarMessage;
 import org.alexdev.kepler.game.games.snowstorm.util.SnowwarSyncValues;
@@ -13,8 +14,11 @@ public class SnowwarWalkMessage implements SnowwarMessage {
         int X = reader.readInt();
         int Y = reader.readInt();
 
-        gamePlayer.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, X);
-        gamePlayer.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, Y);
+        int syncX = SnowwarMaths.convertToGameCoordinate(X);
+        int syncY = SnowwarMaths.convertToGameCoordinate(Y);
+
+        gamePlayer.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, syncX);
+        gamePlayer.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, syncY);
 
         game.getExecutingEvents().add(new SnowwarAvatarMoveEvent(gamePlayer.getObjectId(), X, Y));
     }

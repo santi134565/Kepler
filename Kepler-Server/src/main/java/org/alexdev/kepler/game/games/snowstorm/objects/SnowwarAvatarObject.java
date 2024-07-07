@@ -2,6 +2,7 @@ package org.alexdev.kepler.game.games.snowstorm.objects;
 
 import org.alexdev.kepler.game.games.enums.GameObjectType;
 import org.alexdev.kepler.game.games.player.GamePlayer;
+import org.alexdev.kepler.game.games.snowstorm.SnowwarGame;
 import org.alexdev.kepler.game.games.snowstorm.SnowwarMaths;
 import org.alexdev.kepler.game.games.snowstorm.util.SnowwarActivityState;
 import org.alexdev.kepler.game.games.snowstorm.util.SnowwarObject;
@@ -15,10 +16,11 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SnowwarAvatarObject extends SnowwarObject {
+    private static final int SUBTURN_MOVEMENT = 640;
     private final GamePlayer p;
 
-    public SnowwarAvatarObject(GamePlayer gamePlayer) {
-        super(gamePlayer.getObjectId(), GameObjectType.SNOWWAR_AVATAR_OBJECT);
+    public SnowwarAvatarObject(SnowwarGame game, GamePlayer gamePlayer) {
+        super(game, gamePlayer.getObjectId(), GameObjectType.SNOWWAR_AVATAR_OBJECT);
         this.p = gamePlayer;
     }
 
@@ -95,4 +97,245 @@ public class SnowwarAvatarObject extends SnowwarObject {
         return fChecksum;
 
     }
+
+    @Override
+    public void calculateFrameMovement() {
+        int tActivityTimer = this.getSyncValue(SnowwarSyncValues.ACTIVITY_TIMER);
+        if (tActivityTimer > 0) {
+            if (tActivityTimer == 1) {
+                this.activityTimerTriggered();
+            }
+            this.setSyncValue(SnowwarSyncValues.ACTIVITY_TIMER, tActivityTimer - 1);
+        }
+
+        if (this.existsFinalTarget()) {
+            var tOrigTileLocation = this.getCurrentPosition();
+
+            Position tOrigNextTargetLoc = null;
+
+            if (!this.getNextPosition().equals(tOrigTileLocation)) {
+                tOrigNextTargetLoc = this.getNextPosition();
+            }
+
+            if (this.getStateAllowsMoving()) {
+                boolean tMoving = this.calculateMovement();
+                int tDirBody = this.getSyncValue(SnowwarSyncValues.BODY_DIRECTION);
+
+                if (tMoving) {
+                    if (tOrigNextTargetLoc != null && !tOrigNextTargetLoc.equals(this.getNextPosition())) {
+                        // pRoomObject.gameObjectRefreshLocation(tOrigTileLocation.getX(), tOrigTileLocation.getY(), 0.0, tDirBody, tDirBody);
+                        // pRoomObject.gameObjectNewMoveTarget(this.getGameObjectNextTarget().getTileX(), this.getGameObjectNextTarget().getTileY(), 0.0, tDirBody, tDirBody, "wlk");
+                        this.setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, this.getNextPosition().getX());
+                        this.setSyncValue(SnowwarSyncValues.MOVE_TARGET_Y, this.getNextPosition().getY());
+                    }
+                } else {
+                    this.setSyncValue(SnowwarSyncValues.NEXT_TILE_X, this.getNextPosition().getX());
+                    this.setSyncValue(SnowwarSyncValues.NEXT_TILE_Y, this.getNextPosition().getY());
+
+                    this.setSyncValue(SnowwarSyncValues.X, this.getNextPosition().getX());
+                    this.setSyncValue(SnowwarSyncValues.Y, this.getNextPosition().getY());
+
+                    this.setSyncValue(SnowwarSyncValues.BODY_DIRECTION, tDirBody);
+                    this.stopWalkLoop();
+                }
+            }
+        } else {
+            this.stopWalkLoop();
+        }
+
+        int tActivityState = this.getSyncValue(SnowwarSyncValues.ACTIVITY_STATE);
+
+        if (tActivityState == SnowwarActivityState.ACTIVITY_STATE_STUNNED.getStateId() ||
+            tActivityState == SnowwarActivityState.ACTIVITY_STATE_INVINCIBLE_AFTER_STUN.getStateId()) {
+            return;
+        }
+
+        this.checkForSnowballCollisions();
+    }
+
+    private void stopWalkLoop() {
+        System.out.println("stopped walking");
+    }
+
+    public boolean calculateMovement() {
+        var tMoveTarget = this.getGoalPosition();
+        var tNextTarget = this.getNextPosition();
+
+        if (tMoveTarget == null || tNextTarget == null) {
+            return false;
+        }
+
+        /*
+        if (this.pGameObjectLocation == null) {
+            return 0;
+        }
+
+         */
+        int tMoveTargetX = SnowwarMaths.TileToWorld(tMoveTarget.getX());
+        int tMoveTargetY = SnowwarMaths.TileToWorld(tMoveTarget.getY());
+
+        int tCurrentX = SnowwarMaths.TileToWorld(this.getCurrentPosition().getX());
+        int tCurrentY = SnowwarMaths.TileToWorld(this.getCurrentPosition().getY());
+
+        int tNextTargetX = SnowwarMaths.TileToWorld(tNextTarget.getX());
+        int tNextTargetY = SnowwarMaths.TileToWorld(tNextTarget.getY());
+
+        if (tCurrentX == tMoveTargetX && tCurrentY == tMoveTargetY) {
+            return false;
+        }
+
+        if (tNextTargetX != tCurrentX || tNextTargetY != tCurrentY) {
+            int tOldX = tCurrentX;
+            int tOldY = tCurrentY;
+
+            int tTargetX = tNextTargetX;
+            int tDeltaX = tTargetX - tCurrentX;
+
+            if (tDeltaX < 0) {
+                if (tDeltaX > -SUBTURN_MOVEMENT) {
+                    tCurrentX = tTargetX;
+                } else {
+                    tCurrentX = tCurrentX - SUBTURN_MOVEMENT;
+                }
+            } else {
+                if (tDeltaX > 0) {
+                    if (tDeltaX < SUBTURN_MOVEMENT) {
+                        tCurrentX = tTargetX;
+                    } else {
+                        tCurrentX = tCurrentX + SUBTURN_MOVEMENT;
+                    }
+                }
+            }
+
+            int tTargetY = tNextTargetY;
+            int tDeltaY = tTargetY - tCurrentY;
+
+            if (tDeltaY < 0) {
+                if (tDeltaY > -SUBTURN_MOVEMENT) {
+                    tCurrentY = tTargetY;
+                } else {
+                    tCurrentY = tCurrentY - SUBTURN_MOVEMENT;
+                }
+            } else {
+                if (tDeltaY > 0) {
+                    if (tDeltaY < SUBTURN_MOVEMENT) {
+                        tCurrentY = tTargetY;
+                    } else {
+                        tCurrentY = tCurrentY + SUBTURN_MOVEMENT;
+                    }
+                }
+            }
+
+            this.setSyncValue(SnowwarSyncValues.X, SnowwarMaths.WorldToTile(tCurrentX));
+            this.setSyncValue(SnowwarSyncValues.Y, SnowwarMaths.WorldToTile(tCurrentY));
+
+            //this.pGameObjectLocation.setLoc(tCurrentX, tCurrentY, 0);
+            //this.setGameObjectSyncProperty(new SyncProperty("x", tCurrentX),
+            //        new SyncProperty("y", tCurrentY));
+
+            if (tCurrentX == tMoveTargetX && tCurrentY == tMoveTargetY) {
+                return false;
+            }
+
+            return true;
+        } else {
+            //GameSystem tGameSystem = this.getGameSystem();
+            //Geometry tGeometry = tGameSystem.getGeometry();
+            //World tWorld = tGameSystem.getWorld();
+
+            int tTileX = this.getCurrentPosition().getX();
+            int tTileY = this.getCurrentPosition().getY();
+
+            int tMoveDirection360 = SnowwarMaths.getAngleFromComponents(tMoveTargetX - tCurrentX, tMoveTargetY - tCurrentY);
+            int tNextDir = SnowwarMaths.direction360to8(tMoveDirection360);
+
+            var tNextTile = SnowwarMaths.getTileNeighborInDirection(tTileX, tTileY, tNextDir);
+            boolean tNextAvailable = tNextTile != null && this.getGame().isTileAvailable(tNextTile);
+
+            if (!tNextAvailable) {
+                tNextDir = SnowwarMaths.direction360to8(SnowwarMaths.rotateDirection45DegreesCCW(tMoveDirection360));
+                tNextTile = SnowwarMaths.getTileNeighborInDirection(tTileX, tTileY, tNextDir);
+                tNextAvailable = tNextTile != null && this.getGame().isTileAvailable(tNextTile);
+
+                if (!tNextAvailable) {
+                    tNextDir = SnowwarMaths.direction360to8(SnowwarMaths.rotateDirection45DegreesCW(tMoveDirection360));
+                    tNextTile = SnowwarMaths.getTileNeighborInDirection(tTileX, tTileY, tNextDir);
+                    tNextAvailable = tNextTile != null && this.getGame().isTileAvailable(tNextTile);
+
+                    if (!tNextAvailable) {
+                        tNextTile = null;
+                    }
+                }
+            }
+
+            if (tNextTile != null) {
+                /*
+                this.setGameObjectSyncProperty(new SyncProperty("body_direction", tNextDir),
+                        new SyncProperty("next_tile_x", tNextTile.getX()),
+                        new SyncProperty("next_tile_y", tNextTile.getY()));
+                this.pGameObjectNextTarget.setTileLoc(tNextTile.getX(), tNextTile.getY(), 0);
+                this.reserveSpaceForObject();
+                 */
+
+                this.setSyncValue(SnowwarSyncValues.NEXT_TILE_X, tNextTile.getX());
+                this.setSyncValue(SnowwarSyncValues.NEXT_TILE_Y, tNextTile.getY());
+
+                this.setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, tNextTile.getX());
+                this.setSyncValue(SnowwarSyncValues.MOVE_TARGET_Y, tNextTile.getY());
+
+                this.setSyncValue(SnowwarSyncValues.BODY_DIRECTION, tNextDir);
+
+                return this.calculateMovement();
+            }
+        }
+
+        return false;
+    }
+
+    private boolean existsFinalTarget() {
+        return !this.getCurrentPosition().equals(this.getGoalPosition());
+    }
+
+    private boolean getStateAllowsMoving() {
+        /*
+        tstate = me.pGameObjectSyncValues[#activity_state]
+        tPossibleStates = [getIntVariable("ACTIVITY_STATE_NORMAL"), getIntVariable("ACTIVITY_STATE_CREATING"), getIntVariable("ACTIVITY_STATE_INVINCIBLE_AFTER_STUN")]
+        return tPossibleStates.findPos(tstate) > 0
+         */
+        int tActivityState = this.getSyncValue(SnowwarSyncValues.ACTIVITY_STATE);
+
+        return tActivityState == SnowwarActivityState.ACTIVITY_STATE_STUNNED.getStateId() ||
+                tActivityState == SnowwarActivityState.ACTIVITY_STATE_CREATING.getStateId() ||
+                tActivityState == SnowwarActivityState.ACTIVITY_STATE_INVINCIBLE_AFTER_STUN.getStateId();
+    }
+
+    public Position getCurrentPosition() {
+        return new Position(
+                this.getSyncValue(SnowwarSyncValues.X),
+                this.getSyncValue(SnowwarSyncValues.Y)
+        );
+    }
+
+    public Position getGoalPosition() {
+        return new Position(
+                this.getSyncValue(SnowwarSyncValues.MOVE_TARGET_X),
+                this.getSyncValue(SnowwarSyncValues.MOVE_TARGET_Y)
+        );
+    }
+
+    public Position getNextPosition() {
+        return new Position(
+                this.getSyncValue(SnowwarSyncValues.NEXT_TILE_X),
+                this.getSyncValue(SnowwarSyncValues.NEXT_TILE_Y)
+        );
+    }
+
+    private void checkForSnowballCollisions() {
+
+    }
+
+    private void activityTimerTriggered() {
+
+    }
+
 }

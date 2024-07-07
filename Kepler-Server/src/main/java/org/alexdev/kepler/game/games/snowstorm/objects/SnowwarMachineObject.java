@@ -1,6 +1,5 @@
 package org.alexdev.kepler.game.games.snowstorm.objects;
 
-import org.alexdev.kepler.game.games.GameObject;
 import org.alexdev.kepler.game.games.enums.GameObjectType;
 import org.alexdev.kepler.game.games.snowstorm.SnowwarGame;
 import org.alexdev.kepler.game.games.snowstorm.SnowwarMaths;
@@ -11,13 +10,12 @@ import org.alexdev.kepler.server.netty.streams.NettyResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SnowwarMachineObject extends SnowwarObject {
     private final int objectId;
 
-    public SnowwarMachineObject(int objectId, int X, int Y, int snowballCount) {
-        super(objectId, GameObjectType.SNOWWAR_SNOWMACHINE_OBJECT);
+    public SnowwarMachineObject(SnowwarGame game, int objectId, int X, int Y, int snowballCount) {
+        super(game, objectId, GameObjectType.SNOWWAR_SNOWMACHINE_OBJECT);
         this.objectId = objectId;
 
         this.setSyncValue(SnowwarSyncValues.TYPE, GameObjectType.SNOWWAR_SNOWMACHINE_OBJECT.getObjectId());
@@ -34,6 +32,11 @@ public class SnowwarMachineObject extends SnowwarObject {
         response.writeInt(SnowwarMaths.convertToWorldCoordinate(this.getSyncValue(SnowwarSyncValues.X)));
         response.writeInt(SnowwarMaths.convertToWorldCoordinate(this.getSyncValue(SnowwarSyncValues.Y)));
         response.writeInt(this.getSyncValue(SnowwarSyncValues.SNOWBALL_COUNT));
+    }
+
+    @Override
+    public void calculateFrameMovement() {
+
     }
 
     @Override

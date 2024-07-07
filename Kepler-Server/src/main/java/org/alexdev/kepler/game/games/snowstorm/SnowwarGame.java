@@ -83,7 +83,7 @@ public class SnowwarGame extends Game {
 
         for (var snowballItem : this.getMap().getItems()) {
             if (snowballItem.isSnowballMachine()) {
-             this.getObjects().add(new SnowwarMachineObject(this.createObjectId(), snowballItem.getX(), snowballItem.getY(), 0));
+             this.getObjects().add(new SnowwarMachineObject(this, this.createObjectId(), snowballItem.getX(), snowballItem.getY(), 0));
             }
         }
         //this.getTotalSecondsLeft().set(seconds); // Override with game length choice
@@ -138,7 +138,7 @@ public class SnowwarGame extends Game {
                 generateSpawn(p);
 
                 p.setObjectId(this.createObjectId());
-                p.setGameObject(new SnowwarAvatarObject(p));
+                p.setGameObject(new SnowwarAvatarObject(this, p));
                 p.setScore(0);
 
                 p.getSnowwarObject().setSyncValue(SnowwarSyncValues.TYPE, GameObjectType.SNOWWAR_AVATAR_OBJECT.getObjectId());
@@ -293,5 +293,16 @@ public class SnowwarGame extends Game {
 
     public BlockingQueue<GameObject> getExecutingEvents() {
         return executingEvents;
+    }
+
+    public boolean isTileAvailable(Position tNextTile) {
+        var tTile = this.getMap().getTile(tNextTile);
+
+        if (tTile == null) {
+            return false;
+        }
+
+        return tTile.isWalkable() &&
+                this.getActivePlayers().stream().noneMatch(x -> x.getSnowwarObject().getCurrentPosition().equals(tNextTile));
     }
 }

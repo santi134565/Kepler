@@ -1,5 +1,7 @@
 package org.alexdev.kepler.game.games.snowstorm;
 
+import org.alexdev.kepler.game.pathfinder.Position;
+
 public class SnowwarMaths {
     public static int convertToGameCoordinate(int num) {
         int pAccuracyFactor = 100;
@@ -347,6 +349,43 @@ public class SnowwarMaths {
     }
 
      */
+
+    public static Position getTileNeighborInDirection (int tX, int tY, int tdir) {
+        return switch (tdir) {
+            case 0 -> new Position(tX, tY - 1);
+            case 1 -> new Position(tX + 1, tY - 1);
+            case 2 -> new Position(tX + 1, tY);
+            case 3 -> new Position(tX + 1, tY + -1);
+            case 4 -> new Position(tX, tY + 1);
+            case 5 -> new Position(tX - 1, tY + 1);
+            case 6 -> new Position(tX - 1, tY);
+            case 7 -> new Position(tX - 1, tY - 1);
+            default -> null;
+        };
+    }
+  /*case tdir of
+    0:
+            return me.getTile(tX, tY - 1)
+            1:
+            return me.getTile(tX + 1, tY - 1)
+            2:
+            return me.getTile(tX + 1, tY)
+            3:
+            return me.getTile(tX + 1, tY + 1)
+            4:
+            return me.getTile(tX, tY + 1)
+            5:
+            return me.getTile(tX - 1, tY + 1)
+            6:
+            return me.getTile(tX - 1, tY)
+            7:
+            return me.getTile(tX - 1, tY - 1)
+    otherwise:
+            return error(me, "Invalid direction for tile:" && tdir, #getTileNeighborInDirection)
+    end case*/
+
+    //end
+
     public static Integer[] convertWorldToScreenCoordinate(int tX, int tY, int tZ) {
         int pAccuracyFactor = 100;
         int pTileWidth = 32;
