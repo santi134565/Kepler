@@ -18,7 +18,7 @@ public class SnowwarWalkMessage implements SnowwarMessage {
         int syncY = SnowwarMaths.convertToGameCoordinate(Y);
 
         gamePlayer.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, syncX);
-        gamePlayer.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, syncY);
+        gamePlayer.getSnowwarObject().setSyncValue(SnowwarSyncValues.MOVE_TARGET_Y, syncY);
 
         game.getExecutingEvents().add(new SnowwarAvatarMoveEvent(gamePlayer.getObjectId(), X, Y));
     }

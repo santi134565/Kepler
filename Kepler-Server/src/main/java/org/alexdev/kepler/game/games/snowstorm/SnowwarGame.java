@@ -303,6 +303,9 @@ public class SnowwarGame extends Game {
         }
 
         return tTile.isWalkable() &&
-                this.getActivePlayers().stream().noneMatch(x -> x.getSnowwarObject().getCurrentPosition().equals(tNextTile));
+                this.getActivePlayers()
+                        .stream()
+                        .noneMatch(x ->
+                                x.getSnowwarObject().getCurrentPosition().equals(tNextTile));
     }
 }

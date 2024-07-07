@@ -86,12 +86,12 @@ public class SnowwarGameTask implements Runnable {
 
         for (var obj : this.game.getObjects()) {
             SnowwarObject snowwarObject = (SnowwarObject) obj;
-            snowwarObject.calculateFrameMovement();
+            this.snowWarChecksum += snowwarObject.calculateObjectChecksum();
         }
 
         for (var obj : this.game.getObjects()) {
             SnowwarObject snowwarObject = (SnowwarObject) obj;
-            this.snowWarChecksum += snowwarObject.calculateObjectChecksum();
+            snowwarObject.calculateFrameMovement();
         }
 
         System.out.println("Current turn: " + snowWarTurn + ", checksum: " + this.snowWarChecksum);

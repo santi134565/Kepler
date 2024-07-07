@@ -108,39 +108,29 @@ public class SnowwarAvatarObject extends SnowwarObject {
             this.setSyncValue(SnowwarSyncValues.ACTIVITY_TIMER, tActivityTimer - 1);
         }
 
+        System.out.println("this.existsFinalTarget() - " + this.existsFinalTarget());
+
         if (this.existsFinalTarget()) {
-            var tOrigTileLocation = this.getCurrentPosition();
+            var tNextPosition = this.getNextPosition();
+            var tCurrentPosition = this.getCurrentPosition();
 
-            Position tOrigNextTargetLoc = null;
-
-            if (!this.getNextPosition().equals(tOrigTileLocation)) {
-                tOrigNextTargetLoc = this.getNextPosition();
-            }
+            System.out.println("this.getStateAllowsMoving() - " + this.getStateAllowsMoving());
 
             if (this.getStateAllowsMoving()) {
                 boolean tMoving = this.calculateMovement();
                 int tDirBody = this.getSyncValue(SnowwarSyncValues.BODY_DIRECTION);
 
                 if (tMoving) {
-                    if (tOrigNextTargetLoc != null && !tOrigNextTargetLoc.equals(this.getNextPosition())) {
-                        // pRoomObject.gameObjectRefreshLocation(tOrigTileLocation.getX(), tOrigTileLocation.getY(), 0.0, tDirBody, tDirBody);
-                        // pRoomObject.gameObjectNewMoveTarget(this.getGameObjectNextTarget().getTileX(), this.getGameObjectNextTarget().getTileY(), 0.0, tDirBody, tDirBody, "wlk");
-                        this.setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, this.getNextPosition().getX());
-                        this.setSyncValue(SnowwarSyncValues.MOVE_TARGET_Y, this.getNextPosition().getY());
-                    }
-                } else {
-                    this.setSyncValue(SnowwarSyncValues.NEXT_TILE_X, this.getNextPosition().getX());
-                    this.setSyncValue(SnowwarSyncValues.NEXT_TILE_Y, this.getNextPosition().getY());
-
-                    this.setSyncValue(SnowwarSyncValues.X, this.getNextPosition().getX());
-                    this.setSyncValue(SnowwarSyncValues.Y, this.getNextPosition().getY());
+                    this.setSyncValue(SnowwarSyncValues.X, tNextPosition.getX());
+                    this.setSyncValue(SnowwarSyncValues.Y, tNextPosition.getY());
 
                     this.setSyncValue(SnowwarSyncValues.BODY_DIRECTION, tDirBody);
-                    this.stopWalkLoop();
+
+                    System.out.println("WALKING");
+                } else {
+                    System.out.println("STOPPED WALKING");
                 }
             }
-        } else {
-            this.stopWalkLoop();
         }
 
         int tActivityState = this.getSyncValue(SnowwarSyncValues.ACTIVITY_STATE);
@@ -153,10 +143,6 @@ public class SnowwarAvatarObject extends SnowwarObject {
         this.checkForSnowballCollisions();
     }
 
-    private void stopWalkLoop() {
-        System.out.println("stopped walking");
-    }
-
     public boolean calculateMovement() {
         var tMoveTarget = this.getGoalPosition();
         var tNextTarget = this.getNextPosition();
@@ -165,12 +151,6 @@ public class SnowwarAvatarObject extends SnowwarObject {
             return false;
         }
 
-        /*
-        if (this.pGameObjectLocation == null) {
-            return 0;
-        }
-
-         */
         int tMoveTargetX = SnowwarMaths.TileToWorld(tMoveTarget.getX());
         int tMoveTargetY = SnowwarMaths.TileToWorld(tMoveTarget.getY());
 
@@ -229,22 +209,14 @@ public class SnowwarAvatarObject extends SnowwarObject {
             this.setSyncValue(SnowwarSyncValues.X, SnowwarMaths.WorldToTile(tCurrentX));
             this.setSyncValue(SnowwarSyncValues.Y, SnowwarMaths.WorldToTile(tCurrentY));
 
-            //this.pGameObjectLocation.setLoc(tCurrentX, tCurrentY, 0);
-            //this.setGameObjectSyncProperty(new SyncProperty("x", tCurrentX),
-            //        new SyncProperty("y", tCurrentY));
-
             if (tCurrentX == tMoveTargetX && tCurrentY == tMoveTargetY) {
                 return false;
             }
 
             return true;
         } else {
-            //GameSystem tGameSystem = this.getGameSystem();
-            //Geometry tGeometry = tGameSystem.getGeometry();
-            //World tWorld = tGameSystem.getWorld();
-
-            int tTileX = this.getCurrentPosition().getX();
-            int tTileY = this.getCurrentPosition().getY();
+            int tTileX = SnowwarMaths.WorldToTile(tCurrentX); //this.getCurrentPosition().getX();
+            int tTileY = SnowwarMaths.WorldToTile(tCurrentY); //this.getCurrentPosition().getY();
 
             int tMoveDirection360 = SnowwarMaths.getAngleFromComponents(tMoveTargetX - tCurrentX, tMoveTargetY - tCurrentY);
             int tNextDir = SnowwarMaths.direction360to8(tMoveDirection360);
@@ -269,19 +241,8 @@ public class SnowwarAvatarObject extends SnowwarObject {
             }
 
             if (tNextTile != null) {
-                /*
-                this.setGameObjectSyncProperty(new SyncProperty("body_direction", tNextDir),
-                        new SyncProperty("next_tile_x", tNextTile.getX()),
-                        new SyncProperty("next_tile_y", tNextTile.getY()));
-                this.pGameObjectNextTarget.setTileLoc(tNextTile.getX(), tNextTile.getY(), 0);
-                this.reserveSpaceForObject();
-                 */
-
                 this.setSyncValue(SnowwarSyncValues.NEXT_TILE_X, tNextTile.getX());
                 this.setSyncValue(SnowwarSyncValues.NEXT_TILE_Y, tNextTile.getY());
-
-                this.setSyncValue(SnowwarSyncValues.MOVE_TARGET_X, tNextTile.getX());
-                this.setSyncValue(SnowwarSyncValues.MOVE_TARGET_Y, tNextTile.getY());
 
                 this.setSyncValue(SnowwarSyncValues.BODY_DIRECTION, tNextDir);
 

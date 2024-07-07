@@ -355,7 +355,7 @@ public class SnowwarMaths {
             case 0 -> new Position(tX, tY - 1);
             case 1 -> new Position(tX + 1, tY - 1);
             case 2 -> new Position(tX + 1, tY);
-            case 3 -> new Position(tX + 1, tY + -1);
+            case 3 -> new Position(tX + 1, tY + 1);
             case 4 -> new Position(tX, tY + 1);
             case 5 -> new Position(tX - 1, tY + 1);
             case 6 -> new Position(tX - 1, tY);
